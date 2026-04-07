@@ -1,7 +1,7 @@
 {
   "name": "My Site",
   "description": "A simple site built with Interleaved.",
-  "url": "https://example.com",
+  "url": "https://interleaved.app",
   "nav": [
     { "label": "Home", "url": "/" },
     { "label": "About", "url": "/about.html" }

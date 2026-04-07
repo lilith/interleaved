@@ -51,7 +51,7 @@ Then run the setup helper:
 
 ```bash
 npm run setup:github-app -- \
-  --base-url https://YOUR-RAILWAY-DOMAIN.up.railway.app \
+  --base-url https://interleaved.app \
   --app-name "Interleaved" \
   --env .env.railway
 ```
@@ -80,12 +80,12 @@ railway variables set GITHUB_APP_PRIVATE_KEY="$(grep -A 100 GITHUB_APP_PRIVATE_K
 # Option A: Postmark (recommended)
 railway variables set EMAIL_PROVIDER=postmark
 railway variables set POSTMARK_SERVER_TOKEN="your-server-token"
-railway variables set EMAIL_FROM="Interleaved <noreply@yourdomain.com>"
+railway variables set EMAIL_FROM="Interleaved <noreply@interleaved.app>"
 
 # Option B: Resend
 railway variables set EMAIL_PROVIDER=resend
 railway variables set RESEND_API_KEY="re_xxxxx"
-railway variables set EMAIL_FROM="Interleaved <noreply@yourdomain.com>"
+railway variables set EMAIL_FROM="Interleaved <noreply@interleaved.app>"
 
 # Option C: SMTP (any provider)
 railway variables set EMAIL_PROVIDER=smtp
@@ -93,7 +93,7 @@ railway variables set SMTP_HOST="smtp.example.com"
 railway variables set SMTP_PORT=587
 railway variables set SMTP_USER="user"
 railway variables set SMTP_PASSWORD="pass"
-railway variables set EMAIL_FROM="Interleaved <noreply@yourdomain.com>"
+railway variables set EMAIL_FROM="Interleaved <noreply@interleaved.app>"
 ```
 
 ### Optional: Sentry error tracking
@@ -111,7 +111,7 @@ railway variables set MEDIA_S3_REGION="auto"
 railway variables set MEDIA_S3_ENDPOINT="https://xxx.r2.cloudflarestorage.com"
 railway variables set MEDIA_S3_ACCESS_KEY_ID="xxx"
 railway variables set MEDIA_S3_SECRET_ACCESS_KEY="xxx"
-railway variables set MEDIA_PUBLIC_URL="https://cdn.yourdomain.com"
+railway variables set MEDIA_PUBLIC_URL="https://cdn.interleaved.app"
 ```
 
 ### Optional: Rate limiting
@@ -141,20 +141,20 @@ railway open
 Or check the health endpoint:
 
 ```bash
-curl https://YOUR-DOMAIN.up.railway.app/api/app/version
+curl https://interleaved.app/api/app/version
 ```
 
 ## 8. Custom domain
 
 ```bash
 # Add a custom domain
-railway domain --set admin.yourdomain.com
+railway domain --set interleaved.app
 ```
 
 Then add a CNAME record in your DNS:
 
 ```
-admin.yourdomain.com → YOUR-PROJECT.up.railway.app
+interleaved.app → interleaved.up.railway.app
 ```
 
 Railway handles SSL automatically.
@@ -162,14 +162,14 @@ Railway handles SSL automatically.
 After adding the custom domain, update the GitHub App's callback URLs:
 
 1. Go to `https://github.com/settings/apps/YOUR-APP-NAME`
-2. Update "Homepage URL" to `https://admin.yourdomain.com`
-3. Update "Callback URL" to `https://admin.yourdomain.com/api/auth/callback/github`
-4. Update "Webhook URL" to `https://admin.yourdomain.com/api/webhook/github`
+2. Update "Homepage URL" to `https://interleaved.app`
+3. Update "Callback URL" to `https://interleaved.app/api/auth/callback/github`
+4. Update "Webhook URL" to `https://interleaved.app/api/webhook/github`
 
 Optionally set `BASE_URL`:
 
 ```bash
-railway variables set BASE_URL="https://admin.yourdomain.com"
+railway variables set BASE_URL="https://interleaved.app"
 ```
 
 ## 9. Install the GitHub App on repositories

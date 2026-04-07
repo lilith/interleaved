@@ -28,7 +28,7 @@ const version =
   process.env.NEXT_PUBLIC_APP_VERSION ??
   inferredTagVersion ??
   packageJson.version;
-const UPDATE_DOCS_URL = "https://github.com/lilith/interleaved";
+const UPDATE_DOCS_URL = "https://interleaved.app";
 
 export function About() {
   const [open, setOpen] = useState(false);

@@ -2,6 +2,8 @@
 
 A Claude-native CMS for static sites. Fork of [Pages CMS](https://github.com/pagescms/pagescms).
 
+**[interleaved.app](https://interleaved.app)** — hosted version, free to use.
+
 Human edits content on their phone. Claude revises templates and styling. Both work on the same git repo, interleaved.
 
 ## What's Different from Pages CMS
