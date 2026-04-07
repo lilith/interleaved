@@ -1,7 +1,8 @@
 import { Resend } from "resend";
+import * as postmark from "postmark";
 import nodemailer from "nodemailer";
 
-type MailProvider = "resend" | "smtp";
+type MailProvider = "resend" | "postmark" | "smtp";
 
 type SendEmailInput = {
   to: string | string[];
@@ -47,15 +48,16 @@ const getFromEmail = () => {
 const getEmailProvider = (): MailProvider => {
   const configured = getEnv("EMAIL_PROVIDER")?.toLowerCase();
   if (configured) {
-    if (configured === "resend" || configured === "smtp") return configured;
-    throw new Error(`Unsupported EMAIL_PROVIDER "${configured}". Use "resend" or "smtp".`);
+    if (configured === "resend" || configured === "postmark" || configured === "smtp") return configured;
+    throw new Error(`Unsupported EMAIL_PROVIDER "${configured}". Use "resend", "postmark", or "smtp".`);
   }
 
   if (getEnv("RESEND_API_KEY")) return "resend";
+  if (getEnv("POSTMARK_SERVER_TOKEN")) return "postmark";
   if (getEnv("SMTP_HOST")) return "smtp";
 
   throw new Error(
-    "No email provider configured. Set EMAIL_PROVIDER=resend|smtp, or define RESEND_API_KEY / SMTP_HOST.",
+    "No email provider configured. Set EMAIL_PROVIDER=resend|postmark|smtp, or define RESEND_API_KEY / POSTMARK_SERVER_TOKEN / SMTP_HOST.",
   );
 };
 
@@ -110,6 +112,22 @@ export const sendEmail = async ({ to, subject, html, text }: SendEmailInput) => 
     });
 
     if (error) throw new Error(error.message);
+    return;
+  }
+
+  if (provider === "postmark") {
+    const serverToken = getEnv("POSTMARK_SERVER_TOKEN");
+    if (!serverToken) throw new Error("Missing POSTMARK_SERVER_TOKEN for Postmark provider.");
+
+    const client = new postmark.ServerClient(serverToken);
+    await client.sendEmail({
+      From: from,
+      To: recipients.join(","),
+      Subject: subject,
+      HtmlBody: html,
+      TextBody: text || "",
+      MessageStream: getEnv("POSTMARK_MESSAGE_STREAM") || "outbound",
+    });
     return;
   }
 
