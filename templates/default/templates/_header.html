@@ -1,0 +1,12 @@
+<header class="border-b border-gray-100">
+  <nav class="px-4 py-4 mx-auto max-w-3xl flex items-center justify-between">
+    <a href="/" class="font-semibold text-lg hover:text-gray-600 transition-colors">{{site.name}}</a>
+    {{#if site.nav}}
+    <ul class="flex gap-6 text-sm">
+      {{#each site.nav}}
+      <li><a href="{{this.url}}" class="text-gray-600 hover:text-gray-900 transition-colors">{{this.label}}</a></li>
+      {{/each}}
+    </ul>
+    {{/if}}
+  </nav>
+</header>

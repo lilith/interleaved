@@ -22,9 +22,12 @@ import {
   joinPathSegments,
   normalizePath
 } from "@/lib/utils/file";
+import { cn } from "@/lib/utils";
 import type { ApiSuccess, EntryData, EntryHistoryItem } from "@/types/api";
 import { EntryForm } from "./entry-form";
 import { EntryHistoryDropdown } from "./entry-history";
+import { PreviewPanel } from "@/components/preview-panel";
+import { stringify } from "@/lib/serialization";
 import { EmptyCreate } from "@/components/empty-create";
 import { FileOptions } from "@/components/file/file-options";
 import { RepoActionButtons } from "@/components/repo/repo-action-buttons";
@@ -62,7 +65,7 @@ import {
 } from "@/components/ui/dropdown-menu";
 import { Skeleton } from "@/components/ui/skeleton"
 import { toast } from "sonner";
-import { EllipsisVertical, History, Lock, LockOpen, Save } from "lucide-react";
+import { EllipsisVertical, Eye, History, Lock, LockOpen, Pencil, Save } from "lucide-react";
 import useSWR, { useSWRConfig } from "swr";
 
 type LintView = {
@@ -106,6 +109,7 @@ export function Entry({
   const [isLoading, setIsLoading] = useState(path ? true : false);
   const [isSaving, setIsSaving] = useState(false);
   const [isFormDirty, setIsFormDirty] = useState(false);
+  const [viewMode, setViewMode] = useState<"edit" | "preview">("edit");
   const [hasRegisteredChanges, setHasRegisteredChanges] = useState(false);
   const [error, setError] = useState<string | undefined | null>(null);
   const changeVersionRef = useRef(0);
@@ -793,10 +797,60 @@ export function Entry({
     }
   }
   
+  // Build preview content from current form state
+  const previewContent = useMemo(() => {
+    if (viewMode !== "preview" || !entryContentObject) return "";
+    try {
+      const format = schema?.format || "yaml-frontmatter";
+      if (format === "json") {
+        return JSON.stringify(entryContentObject, null, 2);
+      }
+      return stringify(entryContentObject, { format });
+    } catch {
+      return "";
+    }
+  }, [viewMode, entryContentObject, schema?.format]);
+
   return (
     isLoading
       ? loadingSkeleton
-      : <EntryForm
+      : <>
+        {/* Edit / Preview toggle — compact on mobile */}
+        <div className="flex items-center gap-1 mb-4">
+          <div className="inline-flex h-8 items-center rounded-md bg-muted p-0.5 text-muted-foreground">
+            <button
+              type="button"
+              className={cn(
+                "inline-flex h-7 items-center gap-1.5 rounded-sm px-2.5 text-sm transition-colors",
+                viewMode === "edit" && "bg-background text-foreground shadow-sm",
+              )}
+              onClick={() => setViewMode("edit")}
+            >
+              <Pencil className="size-3.5" />
+              <span className="hidden sm:inline">Edit</span>
+            </button>
+            <button
+              type="button"
+              className={cn(
+                "inline-flex h-7 items-center gap-1.5 rounded-sm px-2.5 text-sm transition-colors",
+                viewMode === "preview" && "bg-background text-foreground shadow-sm",
+              )}
+              onClick={() => setViewMode("preview")}
+            >
+              <Eye className="size-3.5" />
+              <span className="hidden sm:inline">Preview</span>
+            </button>
+          </div>
+        </div>
+
+        {viewMode === "preview" ? (
+          <PreviewPanel
+            content={previewContent}
+            filePath={path || undefined}
+            format={schema?.format === "json" ? "json" : "markdown"}
+          />
+        ) : (
+        <EntryForm
         fields={entryFields}
         contentObject={entryContentObject}
         onSubmit={onSubmit}
@@ -841,5 +895,7 @@ export function Entry({
           setHasRegisteredChanges(true);
         }}
       />
+        )}
+      </>
   );
 };

@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>{{site.name}}</title>
+  {{#if site.description}}<meta name="description" content="{{site.description}}">{{/if}}
+  <link href="https://cdn.jsdelivr.net/npm/tailwindcss@3/dist/tailwind.min.css" rel="stylesheet">
+</head>
+<body class="bg-white text-gray-900 min-h-screen">
+  {{> header}}
+  <main class="px-4 py-8 mx-auto max-w-3xl">
+    {{#if site.description}}
+    <p class="text-lg text-gray-600 mb-8">{{site.description}}</p>
+    {{/if}}
+
+    {{#if posts}}
+    <ul class="space-y-6">
+      {{#each (sortBy posts "date" "desc")}}
+      <li>
+        <a href="{{this.url}}" class="group block">
+          <h2 class="text-xl font-semibold group-hover:text-blue-600 transition-colors">{{this.title}}</h2>
+          {{#if this.date}}
+          <time class="text-sm text-gray-400 mt-1 block" datetime="{{this.date}}">{{formatDate this.date}}</time>
+          {{/if}}
+          {{#if this.description}}
+          <p class="text-gray-600 mt-1">{{this.description}}</p>
+          {{/if}}
+        </a>
+      </li>
+      {{/each}}
+    </ul>
+    {{/if}}
+  </main>
+  {{> footer}}
+</body>
+</html>
