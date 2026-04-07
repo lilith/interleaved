@@ -124,3 +124,25 @@
     @apply bg-background text-foreground;
   }
 }
+
+/* Safe area padding for phones with gesture bars / notches */
+.safe-bottom {
+  padding-bottom: env(safe-area-inset-bottom, 0px);
+}
+
+/* Fixed bottom toolbar for mobile editor — sits above the keyboard */
+.mobile-editor-toolbar {
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  z-index: 50;
+  padding-bottom: env(safe-area-inset-bottom, 0px);
+}
+
+@media (min-width: 768px) {
+  .mobile-editor-toolbar {
+    position: static;
+    padding-bottom: 0;
+  }
+}

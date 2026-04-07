@@ -1,0 +1,16 @@
+{
+  "name": "Interleaved",
+  "short_name": "Interleaved",
+  "description": "Claude-native CMS for static sites",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#ffffff",
+  "theme_color": "#16a34a",
+  "icons": [
+    {
+      "src": "/icon.svg",
+      "sizes": "any",
+      "type": "image/svg+xml"
+    }
+  ]
+}

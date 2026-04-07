@@ -19,8 +19,16 @@ const appUrl = getBaseUrl();
 const socialImage = "/images/social-card.png";
 const description = "Claude-native CMS for static sites";
 
+export const viewport = {
+  width: "device-width",
+  initialScale: 1,
+  maximumScale: 1,
+  viewportFit: "cover" as const,
+};
+
 export const metadata: Metadata = {
   metadataBase: new URL(appUrl),
+  manifest: "/manifest.json",
   title: {
     template: "%s | Interleaved",
     default: "Interleaved",

@@ -1114,6 +1114,51 @@ export function Editor({
         </div>
       </BubbleMenu>
       <EditorContent editor={editor} />
+      {/* Mobile fixed toolbar — pinned above keyboard, hidden on desktop */}
+      {editor.isFocused && !disabled && (
+        <div className="mobile-editor-toolbar border-t bg-background md:hidden">
+          <div className="flex items-center gap-0.5 overflow-x-auto p-1.5 scrollbar-none">
+            <div className="group/native-select relative w-fit shrink-0">
+              <select
+                value={activeState.blockType}
+                onChange={(event) => setBlockType(event.target.value as BlockType)}
+                aria-label="Block style"
+                className="h-8 appearance-none rounded-md border border-transparent bg-transparent px-2 pr-5 text-sm hover:bg-accent focus-visible:outline-none"
+              >
+                {blockOptions.map((option) => (
+                  <option key={option.value} value={option.value}>
+                    {option.label}
+                  </option>
+                ))}
+              </select>
+              <ChevronDownIcon
+                className="text-muted-foreground pointer-events-none absolute top-1/2 right-1 size-3.5 -translate-y-1/2 opacity-50"
+                aria-hidden="true"
+              />
+            </div>
+            {inlineActions.map((action) =>
+              renderIconButton({
+                label: action.label,
+                icon: action.icon,
+                onClick: action.run,
+                disabled: false,
+                toggle: Boolean(action.toggle),
+                pressed: action.toggle ? action.isActive() : false,
+                className: "size-8",
+              }),
+            )}
+            {renderIconButton({
+              label: "Link",
+              icon: LinkIcon,
+              onClick: openLinkInput,
+              disabled: false,
+              toggle: true,
+              pressed: activeState.link,
+              className: "size-8",
+            })}
+          </div>
+        </div>
+      )}
     </div>
   );
 }
