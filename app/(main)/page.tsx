@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from "react";
 import Link from "next/link";
+import { useRouter } from "next/navigation";
 import { useUser } from "@/contexts/user-context";
 import { RepoSelect } from "@/components/repo/repo-select";
 import { RepoTemplates } from "@/components/repo/repo-templates";
@@ -24,9 +25,17 @@ export default function Page() {
   const { user } = useUser();
   const isGithubUser = hasGithubIdentity(user);
 
+  const router = useRouter();
+
+  // Auto-redirect: if user has exactly one recent repo, go there immediately
   useEffect(() => {
-    setHasRecentVisits(getVisits().length > 0);
-  }, []);
+    const visits = getVisits();
+    setHasRecentVisits(visits.length > 0);
+    if (visits.length === 1) {
+      const v = visits[0];
+      router.replace(`/${v.owner}/${v.repo}/${encodeURIComponent(v.branch)}`);
+    }
+  }, [router]);
 
   if (!user) throw new Error("User not found");
   if (!user.accounts) throw new Error("Accounts not found");

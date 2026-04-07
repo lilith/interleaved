@@ -1,16 +1,19 @@
 {
   "name": "Interleaved",
   "short_name": "Interleaved",
-  "description": "Claude-native CMS for static sites",
+  "description": "Edit from your phone. Let Claude handle the code.",
   "start_url": "/",
   "display": "standalone",
   "background_color": "#ffffff",
   "theme_color": "#16a34a",
+  "orientation": "any",
+  "categories": ["productivity", "utilities"],
   "icons": [
     {
       "src": "/icon.svg",
       "sizes": "any",
-      "type": "image/svg+xml"
+      "type": "image/svg+xml",
+      "purpose": "any"
     }
   ]
 }
