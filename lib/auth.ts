@@ -31,6 +31,7 @@ export const auth = betterAuth({
       updateUserInfoOnLink: true,
       allowUnlinkingAll: false,
     },
+    encryptOAuthTokens: true,
   },
   socialProviders: {
     github: {
