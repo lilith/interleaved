@@ -7,6 +7,7 @@ import { buttonVariants } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
 import { getVisits } from "@/lib/tracker";
 import { Skeleton } from "@/components/ui/skeleton";
+import { GitBranch } from "lucide-react";
   
 export function RepoLatest() {
   const [recentVisits, setRecentVisits] = useState<any[]>([]);
@@ -62,9 +63,17 @@ export function RepoLatest() {
             className="truncate font-medium hover:underline"
             href={`/${visit.owner}/${visit.repo}/${encodeURIComponent(visit.branch)}`}
           >{visit.repo}</Link>
-          <div className="text-muted-foreground truncate">{formatDistanceToNow(new Date(visit.timestamp * 1000))} ago</div>
           <Link
-            className={cn("ml-auto", buttonVariants({ variant: "outline", size: "xs"}))}
+            className="inline-flex items-center gap-1 text-xs text-muted-foreground hover:text-foreground transition-colors shrink-0"
+            href={`/${visit.owner}/${visit.repo}`}
+            title="Switch branch"
+          >
+            <GitBranch className="size-3" />
+            {visit.branch}
+          </Link>
+          <div className="text-muted-foreground truncate hidden sm:block">{formatDistanceToNow(new Date(visit.timestamp * 1000))} ago</div>
+          <Link
+            className={cn("ml-auto shrink-0", buttonVariants({ variant: "outline", size: "xs"}))}
             href={`/${visit.owner}/${visit.repo}/${encodeURIComponent(visit.branch)}`}
           >
             Open
