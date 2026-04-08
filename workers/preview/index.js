@@ -157,7 +157,9 @@ export default {
           "Content-Type": "text/html; charset=utf-8",
           "Content-Security-Policy": CSP,
           "X-Content-Type-Options": "nosniff",
-          "X-Frame-Options": "SAMEORIGIN",
+          // No X-Frame-Options — CSP frame-ancestors handles iframe policy.
+          // Setting both makes browsers enforce the stricter one (SAMEORIGIN),
+          // which blocks legit framing from interleaved.app.
           "Referrer-Policy": "no-referrer",
           "Cache-Control": "private, max-age=0, must-revalidate",
           "X-Preview-SHA": sha.slice(0, 8),
