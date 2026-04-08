@@ -37,9 +37,9 @@ export default function Error({
       <EmptyContent className="flex-row justify-center gap-2">
         <Link
           className={buttonVariants({ variant: "default" })}
-          href="/"
+          href="/?dashboard=1"
         >
-          Go home
+          All projects
         </Link>
         <button
           className={buttonVariants({ variant: "outline" })}

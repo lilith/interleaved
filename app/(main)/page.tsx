@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from "react";
 import Link from "next/link";
-import { useRouter } from "next/navigation";
+import { useRouter, useSearchParams } from "next/navigation";
 import { useUser } from "@/contexts/user-context";
 import { RepoSelect } from "@/components/repo/repo-select";
 import { RepoTemplates } from "@/components/repo/repo-templates";
@@ -26,16 +26,18 @@ export default function Page() {
   const isGithubUser = hasGithubIdentity(user);
 
   const router = useRouter();
+  const searchParams = useSearchParams();
+  const forceDashboard = searchParams.get("dashboard") === "1";
 
-  // Auto-redirect: if user has exactly one recent repo, go there immediately
+  // Auto-redirect: if user has one recent repo and didn't explicitly request the dashboard
   useEffect(() => {
     const visits = getVisits();
     setHasRecentVisits(visits.length > 0);
-    if (visits.length === 1) {
+    if (visits.length === 1 && !forceDashboard) {
       const v = visits[0];
       router.replace(`/${v.owner}/${v.repo}/${encodeURIComponent(v.branch)}`);
     }
-  }, [router]);
+  }, [router, forceDashboard]);
 
   if (!user) throw new Error("User not found");
   if (!user.accounts) throw new Error("Accounts not found");
