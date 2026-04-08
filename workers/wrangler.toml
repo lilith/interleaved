@@ -1,0 +1,9 @@
+name = "riapi-proxy"
+main = "riapi-proxy.js"
+compatibility_date = "2024-01-01"
+
+# Route: deploy on media.interleaved.app
+# Uncomment and set your zone ID after first deploy:
+# [[routes]]
+# pattern = "media.interleaved.app/*"
+# zone_id = "YOUR_ZONE_ID"
