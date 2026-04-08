@@ -15,6 +15,7 @@ import { and, eq, sql } from "drizzle-orm";
 import { User } from "@/types/user";
 import { getGithubAccount } from "@/lib/github-account";
 import { createHttpError } from "@/lib/api-error";
+import { refreshGithubToken } from "@/lib/github-token-refresh";
 
 const installationTokenRefreshInFlight = new Map<number, Promise<string>>();
 
@@ -27,11 +28,22 @@ const getToken = cache(async (
 ) => {
   const githubAccount = await getGithubAccount(user.id);
   if (githubAccount?.accessToken) {
+    // Try the stored access token first
     const hasGithubAccess = await canAccessRepoWithToken(githubAccount.accessToken, owner, repo);
     if (hasGithubAccess) return {
       token: githubAccount.accessToken,
       source: "user" as const,
     };
+
+    // Access token may be expired — try refreshing it
+    const refreshedToken = await refreshGithubToken(user.id);
+    if (refreshedToken) {
+      const hasRefreshedAccess = await canAccessRepoWithToken(refreshedToken, owner, repo);
+      if (hasRefreshedAccess) return {
+        token: refreshedToken,
+        source: "user" as const,
+      };
+    }
 
     if (verifyGithubAccess) {
       throw createHttpError(
