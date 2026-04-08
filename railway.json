@@ -4,7 +4,7 @@
     "buildCommand": "npm ci --prefer-offline && npm run build"
   },
   "deploy": {
-    "startCommand": "npx drizzle-kit migrate && npm start",
+    "startCommand": "npx drizzle-kit migrate && node .next/standalone/server.js",
     "healthcheckPath": "/api/app/version",
     "healthcheckTimeout": 30,
     "restartPolicyType": "ON_FAILURE",
