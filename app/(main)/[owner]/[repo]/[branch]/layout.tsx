@@ -74,6 +74,9 @@ export default async function Layout({
           </Empty>
         );
       }
+    } else if (error.status === 401) {
+      // GitHub token expired — send to sign-in to re-authenticate
+      return redirect(signInUrl);
     } else if (error.status === 403) {
       errorMessage = (
         <Empty className="absolute inset-0 border-0 rounded-none">
@@ -82,7 +85,7 @@ export default async function Layout({
             <EmptyDescription>You do not have permission to access this repository.</EmptyDescription>
           </EmptyHeader>
           <EmptyContent>
-            <Link className={buttonVariants({ variant: "default" })} href="/">
+            <Link className={buttonVariants({ variant: "default" })} href="/?noredirect">
               Choose another repository
             </Link>
           </EmptyContent>
