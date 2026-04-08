@@ -21,6 +21,7 @@
 import type { MediaStorageProvider, GitStorageConfig } from "./types";
 import { GitMediaProvider } from "./git-provider";
 import { ExternalMediaProvider } from "./external-provider";
+import { ScopedMediaProvider } from "./scoped-provider";
 
 /** Check if external storage is configured via environment. */
 export function isExternalStorageConfigured(): boolean {
@@ -35,10 +36,15 @@ export function getMediaPublicUrl(): string | null {
 /**
  * Create the appropriate media storage provider.
  *
- * For external storage, no git config is needed — S3 credentials come from env.
- * For git storage, you must provide the repo context and token.
+ * For external storage, wraps in ScopedMediaProvider to isolate repos
+ * in the shared bucket using the stable GitHub repo ID as prefix.
+ * For git storage, no scoping needed — files live in the repo itself.
+ *
+ * @param repoId GitHub numeric repo ID (required for external storage isolation)
+ * @param gitConfig Git repo context (required when falling back to git storage)
  */
 export function createMediaProvider(
+  repoId?: number,
   gitConfig?: GitStorageConfig,
 ): MediaStorageProvider {
   if (isExternalStorageConfigured()) {
@@ -65,7 +71,7 @@ export function createMediaProvider(
       );
     }
 
-    return new ExternalMediaProvider({
+    const provider = new ExternalMediaProvider({
       type: "s3",
       bucket,
       region,
@@ -74,6 +80,12 @@ export function createMediaProvider(
       secretAccessKey,
       publicUrl,
     });
+
+    // Scope to repo for tenant isolation
+    if (repoId) {
+      return new ScopedMediaProvider(provider, repoId);
+    }
+    return provider;
   }
 
   if (!gitConfig) {

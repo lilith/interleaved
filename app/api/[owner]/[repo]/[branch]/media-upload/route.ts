@@ -3,6 +3,7 @@ import { requireApiUserSession } from "@/lib/session-server";
 import { getToken } from "@/lib/token";
 import { createHttpError, toErrorResponse } from "@/lib/api-error";
 import { createMediaProvider, isExternalStorageConfigured } from "@/lib/media/provider";
+import { getRepoId } from "@/lib/github-repo-id";
 
 /**
  * Upload media to external storage (S3/R2) or get a presigned upload URL.
@@ -40,7 +41,8 @@ export async function POST(
       );
     }
 
-    const provider = createMediaProvider();
+    const repoId = await getRepoId(token, params.owner, params.repo);
+    const provider = createMediaProvider(repoId);
     const data = await request.json();
     const { searchParams } = new URL(request.url);
     const presign = searchParams.get("presign") === "true";
@@ -107,7 +109,8 @@ export async function GET(
       throw createHttpError("External media storage is not configured", 404);
     }
 
-    const provider = createMediaProvider();
+    const repoId = await getRepoId(token, params.owner, params.repo);
+    const provider = createMediaProvider(repoId);
     const { searchParams } = new URL(request.url);
     const path = searchParams.get("path") || "";
 

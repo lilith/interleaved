@@ -14,6 +14,7 @@ import mergeWith from "lodash.mergewith";
 import { buildCommitTokens, resolveCommitIdentity, resolveCommitMessage } from "@/lib/commit-message";
 import { requireApiUserSession } from "@/lib/session-server";
 import { isExternalStorageConfigured, createMediaProvider } from "@/lib/media/provider";
+import { getRepoId } from "@/lib/github-repo-id";
 
 /**
  * Create, update and delete individual files in a GitHub repository.
@@ -178,7 +179,8 @@ export async function POST(
 
           // Route media to external storage when configured (default)
           if (isExternalStorageConfigured()) {
-            const provider = createMediaProvider();
+            const repoId = await getRepoId(token, params.owner, params.repo);
+            const provider = createMediaProvider(repoId);
             const result = await provider.uploadFile(normalizedPath, data.content, {
               contentType: data.contentType,
             });

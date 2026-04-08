@@ -3,6 +3,7 @@ import { getFileExtension, normalizePath } from "@/lib/utils/file";
 import { getMediaCache } from "@/lib/github-cache-file";
 import { createHttpError, toErrorResponse } from "@/lib/api-error";
 import { isExternalStorageConfigured, createMediaProvider } from "@/lib/media/provider";
+import { getRepoId } from "@/lib/github-repo-id";
 
 /**
  * Get the list of media files in a directory.
@@ -43,7 +44,8 @@ export async function GET(
     // Use external storage when configured (default for media)
     if (isExternalStorageConfigured()) {
       try {
-        const provider = createMediaProvider();
+        const repoId = await getRepoId(token, params.owner, params.repo);
+        const provider = createMediaProvider(repoId);
         const files = await provider.listFiles(normalizedPath);
         results = files.map((f) => ({
           type: f.type,
