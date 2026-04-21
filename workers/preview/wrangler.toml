@@ -10,3 +10,9 @@ zone_id = "7df767172bb1e898536692c2835b95d6"
 # Secrets (set via `wrangler secret put`):
 #   GITHUB_APP_ID
 #   GITHUB_APP_PRIVATE_KEY
+
+[vars]
+# Fallback URL for assets not found in git (user-uploaded media in R2/S3).
+# Must match the Interleaved server's MEDIA_PUBLIC_URL so /r/{repoId}/ paths
+# resolve correctly. Leave unset to disable the external-storage fallback.
+MEDIA_PUBLIC_URL = "https://media.interleaved.app"

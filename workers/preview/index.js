@@ -15,7 +15,7 @@
  *   4. Returns HTML with strict CSP, separate origin, cross-origin isolation
  */
 
-import { getRepoToken } from "./github-auth.js";
+import { getRepoToken, getRepoId } from "./github-auth.js";
 import { getBranchSha, getTree, fetchBlobs, filterByPrefix } from "./github-tree.js";
 import { WorkerRenderer } from "./renderer.js";
 import { loadMapping, resolvePreview } from "./preview-mapping.js";
@@ -129,6 +129,28 @@ export default {
             },
           });
         }
+
+        // Not in git — fall back to external storage (R2/S3) if configured.
+        // Admin-uploaded media lands in the shared bucket under r/{repoId}/
+        // and is served via MEDIA_PUBLIC_URL (e.g. media.interleaved.app).
+        if (env.MEDIA_PUBLIC_URL) {
+          const repoId = await getRepoId(token, owner, repo);
+          const externalUrl = `${env.MEDIA_PUBLIC_URL.replace(/\/$/, "")}/r/${repoId}/${restPath}`;
+          const extResponse = await fetch(externalUrl, {
+            cf: { cacheTtl: 300, cacheEverything: true },
+          });
+          if (extResponse.ok) {
+            const body = await extResponse.arrayBuffer();
+            return new Response(body, {
+              headers: {
+                "Content-Type": extResponse.headers.get("Content-Type") || getMimeType(restPath),
+                "Cache-Control": "public, max-age=300",
+                "Access-Control-Allow-Origin": "*",
+              },
+            });
+          }
+        }
+
         return new Response("Not found", { status: 404 });
       } catch (e) {
         return new Response(`Asset error: ${e.message}`, { status: 500 });

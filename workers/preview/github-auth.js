@@ -186,3 +186,26 @@ export async function getRepoToken(appId, privateKeyPem, owner, repo) {
   const installationId = await getInstallationId(jwt, owner, repo);
   return await getInstallationToken(jwt, installationId);
 }
+
+/**
+ * Fetch the GitHub numeric repo ID. Stable across renames and transfers,
+ * so we cache aggressively at the edge.
+ */
+export async function getRepoId(token, owner, repo) {
+  const response = await fetch(
+    `https://api.github.com/repos/${owner}/${repo}`,
+    {
+      headers: {
+        Authorization: `token ${token}`,
+        Accept: "application/vnd.github.v3+json",
+        "User-Agent": "interleaved-preview-worker",
+      },
+      cf: { cacheTtl: 3600, cacheEverything: true },
+    },
+  );
+  if (!response.ok) {
+    throw new Error(`Failed to get repo metadata: ${response.status}`);
+  }
+  const data = await response.json();
+  return data.id;
+}
