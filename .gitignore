@@ -47,3 +47,12 @@ public/logo*
 local.db
 test-results/
 .claude/worktrees/
+
+# OpenNext
+.open-next
+
+# wrangler files
+.wrangler
+.dev.vars*
+!.dev.vars.example
+!.env.example
